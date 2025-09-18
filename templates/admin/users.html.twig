@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs — Admin{% endblock %}
+
+{% block body %}
+<section class="page">
+    <h1 class="page-title">👤 Gestion des utilisateurs</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Rôles</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.roles|join(', ') }}</td>
+                    <td>
+                        <a href="{{ path('admin_toggle_role', { id: user.id }) }}" class="btn btn-outline">
+                            {{ 'ROLE_ADMIN' in user.roles ? 'Retirer admin' : 'Donner admin' }}
+                        </a>
+                        <a href="{{ path('admin_delete_user', { id: user.id }) }}" 
+                           class="btn btn-danger"
+                           onclick="return confirm('Supprimer cet utilisateur ?');">
+                            Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">Aucun utilisateur trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Certification</title>
+</head>
+<body>
+    <h1>Certification de réussite</h1>
+
+    <p>Nous certifions que :</p>
+    <p><strong>{{ user.email }}</strong></p>
+
+    <p>a validé avec succès le cursus suivant :</p>
+    <p><strong>{{ certification.cursus.title }}</strong></p>
+
+    <p>Le {{ certification.obtainedAt|date('d/m/Y') }}</p>
+
+    <p>------------------------------</p>
+    <p>Knowledge Learning</p>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ cursus.title }} — Knowledge Learning{% endblock %}
+
+{% block body %}
+<section id="cursus-{{ cursus.id }}" class="cursus-page">
+    <a class="back-link" href="{{ path('home') }}">&larr; Retour à l'accueil</a>
+
+    <h1 class="page-title">{{ cursus.title }}</h1>
+    <p class="lead">
+        {{ cursus.description|length > 250 ? (cursus.description[:250] ~ '...') : cursus.description }}
+    </p>
+
+    <div class="cursus-actions">
+        <div class="price-block">
+            <strong>Prix :</strong> <span class="price">{{ cursus.price }} €</span>
+        </div>
+
+        <div class="action-buttons">
+            {% if app.user %}
+                {# Vérifier si l'utilisateur a déjà acheté ce cursus #}
+                {% set purchased = cursus.purchases|filter(p => p.user == app.user)|length > 0 %}
+
+                {% if purchased %}
+                    <span class="already-bought">✅ Vous avez déjà acheté ce cursus.</span>
+                    {# Certification auto gérée côté backend quand toutes les leçons sont validées #}
+                {% else %}
+                    <a class="btn btn-primary" href="{{ path('payment_checkout_cursus', {id: cursus.id}) }}">
+                        Acheter ce cursus
+                    </a>
+                {% endif %}
+            {% else %}
+                <p>
+                    <a href="{{ path('app_login') }}">Connectez-vous</a>
+                    pour acheter ce cursus et suivre toutes ses leçons.
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <article class="cursus-content">
+        <h2>Programme du cursus</h2>
+        <ul class="lesson-list">
+            {% for lesson in cursus.lessons %}
+                <li>
+                    <a href="{{ path('lesson_show', {id: lesson.id}) }}">{{ lesson.title }}</a>
+                    — {{ lesson.price }} €
+                </li>
+            {% else %}
+                <li>Aucune leçon pour le moment.</li>
+            {% endfor %}
+        </ul>
+    </article>
+</section>
+{% endblock %}

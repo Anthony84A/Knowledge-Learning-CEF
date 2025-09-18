@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ lesson.title }} — Knowledge Learning{% endblock %}
+
+{% block body %}
+<section id="lesson-{{ lesson.id }}" class="lesson-page">
+    <a class="back-link" href="{{ path('cursus_show', {id: lesson.cursus.id}) }}">&larr; Retour au cursus</a>
+    
+    <h1 class="page-title">{{ lesson.title }}</h1>
+    <p class="lead">
+        {{ lesson.description|length > 250 ? (lesson.description[:250] ~ '...') : lesson.description }}
+    </p>
+
+    <div class="lesson-actions">
+        
+        <div class="action-buttons">
+            {% if app.user %}
+                {# Vérifier si la leçon est déjà achetée #}
+                {% set purchased = lesson.purchases|filter(p => p.user == app.user)|length > 0 %}
+
+                {% if purchased %}
+                    
+
+                    <form method="post" action="{{ path('lesson_validate', {id: lesson.id}) }}" class="inline-form">
+                        <input type="hidden" name="_token" value="{{ csrf_token('validate_lesson' ~ lesson.id) }}">
+                        <button class="btn btn-outline" type="submit">Valider la leçon</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-primary" href="{{ path('payment_checkout', {id: lesson.id}) }}">
+                        Acheter cette leçon
+                    </a>
+                {% endif %}
+            {% else %}
+                <p>
+                    <a href="{{ path('app_login') }}">Connectez-vous</a> 
+                    pour acheter ou valider cette leçon.
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <article class="lesson-content">
+        <h2>Contenu de la leçon</h2>
+        <p>{{ lesson.description }}</p>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+            Ce texte est un exemple de contenu factice — tu pourras le remplacer 
+            par la vraie ressource pédagogique.
+        </p>
+    </article>
+</section>
+{% endblock %}

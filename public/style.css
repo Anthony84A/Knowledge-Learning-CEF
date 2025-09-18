@@ -1,0 +1,284 @@
+:root{
+  --bg: #f1f8fc;
+  --primary: #0074c7;
+  --primary-dark: #00497c;
+  --muted: #384050;
+  --danger: #cd2c2e;
+  --success: #82b864;
+  --container-width: 1100px;
+  --radius: 12px;
+  --gap: 18px;
+  --card-bg: #ffffff;
+  --text: #21303a;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.45;
+}
+
+.container{
+  width:90%;
+  max-width:var(--container-width);
+  margin:0 auto;
+  padding:28px 0;
+}
+
+/* Header */
+.site-header{
+  background:linear-gradient(180deg,var(--primary-dark),var(--primary));
+  color:#fff;
+  padding:12px 0;
+  box-shadow:0 2px 6px rgba(0,0,0,0.06);
+}
+.header-inner{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  justify-content:space-between;
+}
+.logo{
+  font-weight:700;
+  color:#fff;
+  text-decoration:none;
+  font-size:18px;
+}
+.site-nav ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.site-nav ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 6px 10px;
+  transition: color 0.2s ease;
+}
+
+.site-nav ul li a:hover {
+  color: var(--primary);
+}
+.site-nav a{ color:rgba(255,255,255,0.95); text-decoration:none; font-weight:600; font-size:14px}
+
+
+/* === LOGO === */
+.logo-img {
+    max-height: 100px;
+    width: auto;
+    display: block;
+    border-radius: 10%;
+}
+
+#logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+
+
+/* Buttons */
+.btn{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:600;
+  font-size:14px;
+}
+.btn-primary{ background:var(--primary); color:#fff; border:none; }
+.btn-secondary{ background:var(--primary-dark); color:#fff; border:none; }
+.btn-outline{ background:transparent; border:2px solid rgba(0,0,0,0.08); color:var(--muted); }
+
+.header-actions .btn{ margin-left:8px }
+
+/* Page titles */
+.page-title{ margin:8px 0 12px; font-size:28px; color:var(--muted) }
+.sub-title{ margin-top:22px; color:var(--muted); font-size:20px }
+
+/* Grid layout for cards */
+.grid{ display:grid; gap:var(--gap) }
+.grid-themes{ grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); }
+.grid-cursuses{ grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); }
+.grid-lessons{ grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); }
+
+/* Card */
+.card{
+  background:var(--card-bg);
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow: 0 6px 18px rgba(4,21,40,0.04);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.card-title{ margin:0; font-size:18px; color:var(--muted) }
+.card-desc{ color: #52646e; margin:0; font-size:14px }
+.card-meta{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+
+/* Price */
+.price{ font-weight:700; color:var(--primary-dark) }
+.price.large{ font-size:20px }
+
+
+/* Inline form */
+.inline-form{ display:inline-block; margin:0; }
+
+/* Flash messages */
+.flash{ padding:10px 14px; border-radius:8px; margin-bottom:14px; font-weight:600; }
+.flash-success{ background: #eaf7ea; color: var(--success) }
+.flash-error{ background:#ffe9e9; color:var(--danger) }
+
+/* Footer */
+.site-footer{ padding:18px 0; text-align:center; color:#6b7880; background:transparent; border-top:1px solid rgba(0,0,0,0.03) }
+
+/* Small helpers */
+.back-link{ display:inline-block; margin-bottom:12px; color:var(--primary); text-decoration:none; font-size:14px }
+
+
+/* === Auth pages (login / register) === */
+.auth-page {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.auth-form-container {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--muted);
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.auth-alt {
+  margin-top: 18px;
+  font-size: 14px;
+  text-align: center;
+}
+
+
+
+/* === User dropdown menu === */
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.user-toggle {
+  cursor: pointer;
+}
+
+.user-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  list-style: none;
+  padding: 8px 0;
+  margin: 8px 0 0;
+  min-width: 180px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.user-dropdown li {
+  padding: 6px 16px;
+}
+
+.user-dropdown li a {
+  display: block;
+  color: #333;
+  text-decoration: none;
+}
+
+.user-dropdown li a:hover {
+  background: #f5f5f5;
+}
+
+/* Affichage dropdown au hover */
+.user-menu:hover .user-dropdown {
+  display: block;
+}
+
+
+/* === Catalogue === */
+.cursus {
+  margin-bottom: 40px;
+  padding: 20px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.cursus-title {
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+
+.cursus-description {
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.lesson-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lesson-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.lesson-title {
+  font-weight: 500;
+}
+
+.lesson-price {
+  color: var(--primary);
+  font-weight: bold;
+  margin: 0 12px;
+}
+
+
+
+
+/* Responsive tweaks */
+@media (max-width:720px){
+  .header-inner{ flex-direction:column; align-items:flex-start; gap:12px; }
+  .card{ padding:12px }
+}

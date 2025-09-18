@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{% block title %}Knowledge Learning{% endblock %}</title>
+
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="stylesheet" href="{{ asset('style.css') }}" onerror="this.href='/style.css'">
+</head>
+<body id="site-body">
+<header id="site-header" class="site-header">
+    <div class="container header-inner">
+        <a href="{{ path('home') }}" id="logo" class="logo">
+            <img src="{{ asset('logo.jpg') }}" alt="Knowledge Learning" class="logo-img">
+        </a>
+
+        <nav id="main-nav" class="site-nav">
+            <ul>
+                <li><a href="{{ path('home') }}">Accueil</a></li>
+                <li><a href="{{ path('catalogue') }}">Catalogue</a></li>
+
+                {% if app.user %}
+                    <li><a href="{{ path('user_courses') }}">Mes cours</a></li>
+                    <li><a href="{{ path('user_certifications') }}">Mes certifications</a></li>
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li><a href="{{ path('admin_dashboard') }}">Administration</a></li>
+                    {% endif %}
+
+                    <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{{ path('app_login') }}">Connexion</a></li>
+                    <li><a href="{{ path('app_register') }}">Inscription</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main id="site-main" class="container">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash flash-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    {% block body %}{% endblock %}
+</main>
+
+<footer id="site-footer" class="site-footer">
+    <div class="container">
+        <small>© {{ "now"|date("Y") }} Knowledge Learning - Tous droits réservés</small>
+    </div>
+</footer>
+</body>
+</html>

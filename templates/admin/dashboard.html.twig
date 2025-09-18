@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord — Administration{% endblock %}
+
+{% block body %}
+<section class="page">
+    <h1 class="page-title">Tableau de bord administrateur</h1>
+
+    <div class="grid grid-themes">
+        <div class="card">
+            <h2 class="card-title">👥 Utilisateurs</h2>
+            <p class="card-desc">{{ nbUsers }} inscrits</p>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">📘 Cursus</h2>
+            <p class="card-desc">{{ nbCursus }} cursus disponibles</p>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">🎓 Leçons</h2>
+            <p class="card-desc">{{ nbLessons }} leçons en ligne</p>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

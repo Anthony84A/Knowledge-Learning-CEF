@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Cursus{% endblock %}
+
+{% block body %}
+<section class="page">
+    <h1 class="page-title">📘 Gestion des Cursus</h1>
+
+    <a class="btn btn-primary" href="{{ path('admin_cursus_new') }}">➕ Nouveau cursus</a>
+
+    <ul class="list">
+        {% for cur in cursus %}
+            <li>
+                <strong>{{ cur.title }}</strong> — {{ cur.price }} €
+                <a href="{{ path('admin_cursus_edit', {id: cur.id}) }}">✏️ Modifier</a>
+                <a href="{{ path('admin_cursus_delete', {id: cur.id}) }}" onclick="return confirm('Supprimer ce cursus ?')">🗑 Supprimer</a>
+            </li>
+        {% else %}
+            <li>Aucun cursus disponible.</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}

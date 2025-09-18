@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Leçon{% endblock %}
+
+{% block body %}
+<section class="page">
+    <h1 class="page-title">➕ Ajouter une leçon</h1>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-primary">Enregistrer</button>
+    {{ form_end(form) }}
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement réussi{% endblock %}
+
+{% block body %}
+<section class="page">
+    <h1>Paiement réussi ✅</h1>
+    <p>Merci pour votre achat ! Vous avez maintenant accès à la leçon <strong>{{ lesson.title }}</strong>.</p>
+
+    <a href="{{ path('user_courses') }}" class="btn btn-primary">Voir mes cours</a>
+</section>
+{% endblock %}

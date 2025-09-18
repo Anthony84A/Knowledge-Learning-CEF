@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement annulé{% endblock %}
+
+{% block body %}
+<section class="page">
+    <h1>Paiement annulé ❌</h1>
+    <p>Le paiement n’a pas été finalisé. Vous pouvez réessayer à tout moment.</p>
+    <a href="{{ path('catalogue') }}" class="btn btn-outline">Retour au catalogue</a>
+</section>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Leçons{% endblock %}
+
+{% block body %}
+<section class="page">
+    <h1 class="page-title">📖 Gestion des Leçons</h1>
+
+    <a class="btn btn-primary" href="{{ path('admin_lesson_new') }}">➕ Nouvelle leçon</a>
+
+    <ul class="list">
+        {% for lesson in lessons %}
+            <li>
+                <strong>{{ lesson.title }}</strong> — {{ lesson.price }} € 
+                <em>(Cursus : {{ lesson.cursus ? lesson.cursus.title : 'Aucun' }})</em>
+                <a href="{{ path('admin_lesson_edit', {id: lesson.id}) }}">✏️ Modifier</a>
+                <a href="{{ path('admin_lesson_delete', {id: lesson.id}) }}" onclick="return confirm('Supprimer cette leçon ?')">🗑 Supprimer</a>
+            </li>
+        {% else %}
+            <li>Aucune leçon disponible.</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes certifications — Knowledge Learning{% endblock %}
+
+{% block body %}
+<section class="page">
+    <h1 class="page-title">Mes certifications</h1>
+
+    {% if certifications is not empty %}
+        <ul class="certification-list">
+            {% for cert in certifications %}
+                <li>
+                    📜 Certification obtenue pour le cursus 
+                    <strong>{{ cert.cursus.title }}</strong>
+                    le {{ cert.obtainedAt|date('d/m/Y') }}
+
+                    <a href="{{ path('user_certification_download', {id: cert.id}) }}" class="btn btn-primary">
+                        Télécharger le PDF
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Vous n’avez encore obtenu aucune certification.</p>
+    {% endif %}
+</section>
+{% endblock %}

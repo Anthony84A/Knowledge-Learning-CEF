@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Achat confirmé — {{ cursus.title }}{% endblock %}
+
+{% block body %}
+<section class="payment-success">
+    <h1>🎉 Achat confirmé !</h1>
+    <p>Vous avez acheté le cursus <strong>{{ cursus.title }}</strong>.</p>
+    <p>Toutes les leçons de ce cursus sont désormais accessibles.</p>
+
+    <a href="{{ path('cursus_show', {id: cursus.id}) }}" class="btn btn-primary">
+        Voir le cursus
+    </a>
+</section>
+{% endblock %}

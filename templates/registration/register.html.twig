@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription — Knowledge Learning{% endblock %}
+
+{% block body %}
+<section class="auth-page">
+    <h1 class="page-title">Créer un compte</h1>
+
+    
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash flash-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="auth-form-container">
+        {{ form_start(registrationForm, { attr: { class: 'auth-form' } }) }}
+            <div class="form-group">
+                {{ form_label(registrationForm.email, 'Adresse email') }}
+                {{ form_widget(registrationForm.email, { attr: { class: 'form-control' } }) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
+                {{ form_widget(registrationForm.plainPassword, { attr: { class: 'form-control' } }) }}
+                {{ form_errors(registrationForm.plainPassword) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Créer un compte</button>
+        {{ form_end(registrationForm) }}
+    </div>
+
+    <p class="auth-alt">Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+</section>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue — Knowledge Learning{% endblock %}
+
+{% block body %}
+<section class="page">
+    <h1 class="page-title">Catalogue des cours</h1>
+
+    {% for cur in cursus %}
+        <article class="cursus">
+            <h2 class="cursus-title">{{ cur.title }}</h2>
+            <p class="cursus-description">{{ cur.description }}</p>
+
+            <div class="cursus-actions">
+                {% if app.user %}
+                    {% set cursusPurchased = cur.purchases|filter(p => p.user == app.user)|length > 0 %}
+                    {% if cursusPurchased %}
+                        <span class="already-bought">✅ Vous avez déjà acheté ce cursus.</span>
+                    {% else %}
+                        <a href="{{ path('payment_checkout_cursus', { id: cur.id }) }}" class="btn btn-primary">
+                            Acheter le cursus ({{ cur.price }} €)
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <p><a href="{{ path('app_login') }}">Connectez-vous</a> pour acheter ce cursus.</p>
+                {% endif %}
+            </div>
+
+            <h3>Leçons disponibles :</h3>
+            <ul class="lesson-list">
+                {% for lesson in cur.lessons %}
+                    <li class="lesson-item">
+                        <span class="lesson-title">{{ lesson.title }}</span>
+                        <span class="lesson-price">{{ lesson.price }} €</span>
+
+                        {% if app.user %}
+                            {% set lessonPurchased = lesson.purchases|filter(p => p.user == app.user)|length > 0 %}
+                            {% if lessonPurchased %}
+                                <span class="already-bought">✅ Déjà acheté</span>
+                            {% else %}
+                                <a href="{{ path('payment_checkout', { id: lesson.id }) }}" class="btn btn-primary">
+                                    Acheter
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ path('app_login') }}" class="btn btn-outline">Se connecter</a>
+                        {% endif %}
+                    </li>
+                {% else %}
+                    <li>Aucune leçon disponible pour ce cursus.</li>
+                {% endfor %}
+            </ul>
+        </article>
+    {% else %}
+        <p>Aucun cursus disponible pour le moment.</p>
+    {% endfor %}
+</section>
+{% endblock %}

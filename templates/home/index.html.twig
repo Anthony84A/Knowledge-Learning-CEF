@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil — Knowledge Learning{% endblock %}
+
+{% block body %}
+<section id="themes" class="theme-list">
+    <h1 class="page-title">Thèmes de formation</h1>
+
+    <div class="grid grid-themes">
+        {% for theme in themes %}
+            <article class="card theme-card" id="theme-{{ theme.id }}">
+                <h2 class="card-title"><a href="{{ path('theme_show', {id: theme.id}) }}">{{ theme.title }}</a></h2>
+                <p class="card-desc">{{ theme.description|length > 140 ? (theme.description[:140] ~ '...') : theme.description }}</p>
+                <a class="btn btn-secondary" href="{{ path('theme_show', {id: theme.id}) }}">Voir les cursus</a>
+            </article>
+        {% else %}
+            <p>Aucun thème disponible.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

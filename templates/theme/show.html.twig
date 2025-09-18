@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ theme.title }} — Knowledge Learning{% endblock %}
+
+{% block body %}
+<section id="theme-{{ theme.id }}" class="theme-page">
+    <a class="back-link" href="{{ path('home') }}">&larr; Retour aux thèmes</a>
+    <h1 class="page-title">{{ theme.title }}</h1>
+    <p class="lead">{{ theme.description }}</p>
+
+    <h2 class="sub-title">Cursus disponibles</h2>
+    <div class="grid grid-cursuses">
+        {% for cursus in theme.cursuses %}
+            <article class="card cursus-card" id="cursus-{{ cursus.id }}">
+                <h3 class="card-title"><a href="{{ path('cursus_show', {id: cursus.id}) }}">{{ cursus.title }}</a></h3>
+                <p class="card-desc">{{ cursus.description|length > 120 ? (cursus.description[:120] ~ '...') : cursus.description }}</p>
+                <div class="card-meta">
+                    <span class="price">{{ cursus.price }} €</span>
+                    <a class="btn btn-primary" href="{{ path('cursus_show', {id: cursus.id}) }}">Voir le cursus</a>
+                </div>
+            </article>
+        {% else %}
+            <p>Aucun cursus pour ce thème.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
