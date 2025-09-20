@@ -10,15 +10,46 @@ use Symfony\Component\Mailer\MailerInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
+/**
+ * EmailVerifier
+ *
+ * Handles the generation, sending, and validation of email verification links for users.
+ *
+ * Responsibilities:
+ * - Generate signed email confirmation URLs
+ * - Send confirmation emails to users
+ * - Validate confirmation requests and mark users as verified
+ */
 class EmailVerifier
 {
+    private VerifyEmailHelperInterface $verifyEmailHelper;
+    private MailerInterface $mailer;
+    private EntityManagerInterface $entityManager;
+
+    /**
+     * Constructor.
+     *
+     * @param VerifyEmailHelperInterface $verifyEmailHelper Helper to generate and validate email signatures
+     * @param MailerInterface $mailer Mailer service to send emails
+     * @param EntityManagerInterface $entityManager Doctrine entity manager
+     */
     public function __construct(
-        private VerifyEmailHelperInterface $verifyEmailHelper,
-        private MailerInterface $mailer,
-        private EntityManagerInterface $entityManager
+        VerifyEmailHelperInterface $verifyEmailHelper,
+        MailerInterface $mailer,
+        EntityManagerInterface $entityManager
     ) {
+        $this->verifyEmailHelper = $verifyEmailHelper;
+        $this->mailer = $mailer;
+        $this->entityManager = $entityManager;
     }
 
+    /**
+     * Send an email confirmation link to the user.
+     *
+     * @param string $verifyEmailRouteName Name of the route to verify the email
+     * @param User $user The user to verify
+     * @param TemplatedEmail $email The email object to send
+     */
     public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
@@ -38,11 +69,20 @@ class EmailVerifier
     }
 
     /**
-     * @throws VerifyEmailExceptionInterface
+     * Validate the email confirmation from the request and mark the user as verified.
+     *
+     * @param Request $request
+     * @param User $user
+     *
+     * @throws VerifyEmailExceptionInterface If the signature is invalid or expired
      */
     public function handleEmailConfirmation(Request $request, User $user): void
     {
-        $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, (string) $user->getId(), (string) $user->getEmail());
+        $this->verifyEmailHelper->validateEmailConfirmationFromRequest(
+            $request,
+            (string) $user->getId(),
+            (string) $user->getEmail()
+        );
 
         $user->setIsVerified(true);
 

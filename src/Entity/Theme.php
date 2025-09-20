@@ -9,6 +9,18 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\Timestampable;
 use App\Entity\Traits\Blameable;
 
+/**
+ * Theme entity
+ *
+ * Represents a training theme that groups multiple courses (cursuses).
+ *
+ * Uses:
+ * - Timestampable: Tracks creation and update times
+ * - Blameable: Tracks which user created or updated the entity
+ *
+ * Relationships:
+ * - Cursus: One-to-many relationship
+ */
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Theme
@@ -27,9 +39,6 @@ class Theme
     #[ORM\Column(type: 'text')]
     private ?string $description = null;
 
-    /**
-     * @var Collection<int, Cursus>
-     */
     #[ORM\OneToMany(targetEntity: Cursus::class, mappedBy: 'theme', orphanRemoval: true)]
     private Collection $cursuses;
 
@@ -37,6 +46,8 @@ class Theme
     {
         $this->cursuses = new ArrayCollection();
     }
+
+    // --- Getters and setters ---
 
     public function getId(): ?int
     {

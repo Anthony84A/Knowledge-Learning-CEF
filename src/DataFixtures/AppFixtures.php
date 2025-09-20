@@ -10,18 +10,37 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+/**
+ * Data fixtures for the Knowledge Learning platform.
+ *
+ * Handles:
+ * - Creating initial users (admin and regular users)
+ * - Creating themes, courses (cursuses), and lessons as per the project specification
+ */
 class AppFixtures extends Fixture
 {
     private UserPasswordHasherInterface $passwordHasher;
 
+    /**
+     * Constructor.
+     *
+     * @param UserPasswordHasherInterface $passwordHasher Service to hash user passwords
+     */
     public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
         $this->passwordHasher = $passwordHasher;
     }
 
+    /**
+     * Load initial data into the database.
+     *
+     * @param ObjectManager $manager Doctrine object manager
+     *
+     * @return void
+     */
     public function load(ObjectManager $manager): void
     {
-        // --- Utilisateurs ---
+        // --- Create initial users ---
         $admin = new User();
         $admin->setEmail('admin@site.com');
         $admin->setRoles(['ROLE_ADMIN']);
@@ -43,7 +62,7 @@ class AppFixtures extends Fixture
         $user2->setIsVerified(true);
         $manager->persist($user2);
 
-        // --- Thèmes, Cursus et Leçons (issus du PDF) ---
+        // --- Create themes, courses (cursuses), and lessons ---
         $data = [
             "Musique" => [
                 [
@@ -103,16 +122,17 @@ class AppFixtures extends Fixture
             ],
         ];
 
+        // Loop through the data and create entities
         foreach ($data as $themeTitle => $cursuses) {
             $theme = new Theme();
             $theme->setTitle($themeTitle);
-            $theme->setDescription("Description du thème : $themeTitle");
+            $theme->setDescription("Theme description: $themeTitle");
             $manager->persist($theme);
 
             foreach ($cursuses as $cursusData) {
                 $cursus = new Cursus();
                 $cursus->setTitle($cursusData["title"]);
-                $cursus->setDescription("Description du cursus : " . $cursusData["title"]);
+                $cursus->setDescription("Course description: " . $cursusData["title"]);
                 $cursus->setPrice($cursusData["price"]);
                 $cursus->setTheme($theme);
                 $manager->persist($cursus);
@@ -120,7 +140,7 @@ class AppFixtures extends Fixture
                 foreach ($cursusData["lessons"] as $lessonData) {
                     $lesson = new Lesson();
                     $lesson->setTitle($lessonData["title"]);
-                    $lesson->setDescription("Contenu de la leçon : " . $lessonData["title"]);
+                    $lesson->setDescription("Lesson content: " . $lessonData["title"]);
                     $lesson->setPrice($lessonData["price"]);
                     $lesson->setCursus($cursus);
                     $manager->persist($lesson);
@@ -128,6 +148,7 @@ class AppFixtures extends Fixture
             }
         }
 
+        // Persist all changes to the database
         $manager->flush();
     }
 }

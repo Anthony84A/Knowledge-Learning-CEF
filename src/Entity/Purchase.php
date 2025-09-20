@@ -8,7 +8,20 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\Timestampable;
 use App\Entity\Traits\Blameable;
 
-
+/**
+ * Purchase entity
+ *
+ * Represents a purchase made by a user, either for a lesson or an entire course (cursus).
+ *
+ * Uses:
+ * - Timestampable: Tracks creation and update times
+ * - Blameable: Tracks which user created or updated the entity
+ *
+ * Relationships:
+ * - User: Many-to-one relationship
+ * - Lesson: Many-to-one relationship (optional if purchase is for a Cursus)
+ * - Cursus: Many-to-one relationship (optional if purchase is for a Lesson)
+ */
 #[ORM\Entity(repositoryClass: PurchaseRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Purchase
@@ -21,9 +34,8 @@ class Purchase
     #[ORM\Column]
     private ?int $id = null;
 
-    // "lesson" ou "cursus"
     #[ORM\Column(length: 20)]
-    private ?string $type = null;
+    private ?string $type = null; // "lesson" or "cursus"
 
     #[ORM\ManyToOne(inversedBy: 'purchases')]
     #[ORM\JoinColumn(nullable: false)]
@@ -38,17 +50,28 @@ class Purchase
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $purchasedAt = null;
 
-
+    /**
+     * Constructor
+     *
+     * Initializes purchasedAt to the current datetime.
+     */
     public function __construct()
     {
         $this->purchasedAt = new \DateTimeImmutable();
     }
+
+    // --- Getters and setters ---
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * Get the type of purchase.
+     *
+     * @return string|null "lesson" or "cursus"
+     */
     public function getType(): ?string
     {
         return $this->type;
@@ -103,5 +126,4 @@ class Purchase
         $this->purchasedAt = $purchasedAt;
         return $this;
     }
-
 }

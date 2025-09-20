@@ -13,13 +13,29 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Class PaymentController
+ *
+ * This controller manages the payment workflow using Stripe Checkout.
+ * It supports both lesson purchases and cursus purchases, handling
+ * the creation of purchase records upon successful payment.
+ *
+ * @package App\Controller
+ */
 class PaymentController extends AbstractController
 {
+    /**
+     * Initiates a Stripe Checkout session for purchasing a single lesson.
+     *
+     * @param Lesson $lesson The lesson entity being purchased.
+     * @param Request $request The current HTTP request, used to build success/cancel URLs.
+     *
+     * @return Response Redirects the user to the Stripe Checkout page.
+     */
     #[Route('/checkout/{id}', name: 'payment_checkout')]
     public function checkout(Lesson $lesson, Request $request): Response
     {
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
-
         $YOUR_DOMAIN = $request->getSchemeAndHttpHost();
 
         $checkout_session = Session::create([
@@ -27,7 +43,7 @@ class PaymentController extends AbstractController
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'eur',
-                    'unit_amount' => intval($lesson->getPrice() * 100), // prix en centimes
+                    'unit_amount' => intval($lesson->getPrice() * 100),
                     'product_data' => [
                         'name' => $lesson->getTitle(),
                     ],
@@ -42,6 +58,16 @@ class PaymentController extends AbstractController
         return $this->redirect($checkout_session->url);
     }
 
+    /**
+     * Handles a successful lesson purchase after returning from Stripe Checkout.
+     * If the purchase does not already exist, it is created and persisted.
+     *
+     * @param int $lessonId The ID of the purchased lesson.
+     * @param string $sessionId The Stripe Checkout session ID.
+     * @param EntityManagerInterface $em Entity manager to handle database operations.
+     *
+     * @return Response Renders the success page with lesson details.
+     */
     #[Route('/success/{lessonId}/{sessionId}', name: 'payment_success')]
     public function success(int $lessonId, string $sessionId, EntityManagerInterface $em): Response
     {
@@ -55,7 +81,6 @@ class PaymentController extends AbstractController
             throw $this->createNotFoundException('Leçon introuvable.');
         }
 
-        // Vérifier si l’utilisateur a déjà acheté cette leçon
         $existing = $em->getRepository(Purchase::class)->findOneBy([
             'user' => $user,
             'lesson' => $lesson
@@ -77,13 +102,25 @@ class PaymentController extends AbstractController
         ]);
     }
 
+    /**
+     * Displays the cancellation page when a Stripe Checkout session is cancelled.
+     *
+     * @return Response Returns the cancel page view.
+     */
     #[Route('/cancel', name: 'payment_cancel')]
     public function cancel(): Response
     {
         return $this->render('payment/cancel.html.twig');
     }
 
-
+    /**
+     * Initiates a Stripe Checkout session for purchasing a full cursus.
+     *
+     * @param Cursus $cursus The cursus entity being purchased.
+     * @param Request $request The current HTTP request, used to build success/cancel URLs.
+     *
+     * @return Response Redirects the user to the Stripe Checkout page.
+     */
     #[Route('/checkout/cursus/{id}', name: 'payment_checkout_cursus')]
     public function checkoutCursus(Cursus $cursus, Request $request): Response
     {
@@ -110,6 +147,16 @@ class PaymentController extends AbstractController
         return $this->redirect($checkout_session->url);
     }
 
+    /**
+     * Handles a successful cursus purchase after returning from Stripe Checkout.
+     * Creates a purchase for the cursus and, if not already present, for each lesson it contains.
+     *
+     * @param int $cursusId The ID of the purchased cursus.
+     * @param string $sessionId The Stripe Checkout session ID.
+     * @param EntityManagerInterface $em Entity manager to handle database operations.
+     *
+     * @return Response Renders the success page with cursus details.
+     */
     #[Route('/success-cursus/{cursusId}/{sessionId}', name: 'payment_success_cursus')]
     public function successCursus(int $cursusId, string $sessionId, EntityManagerInterface $em): Response
     {
@@ -123,7 +170,6 @@ class PaymentController extends AbstractController
             throw $this->createNotFoundException('Cursus introuvable.');
         }
 
-        // Vérifier si l’utilisateur a déjà acheté ce cursus
         $existingCursusPurchase = $em->getRepository(Purchase::class)->findOneBy([
             'user' => $user,
             'cursus' => $cursus,
@@ -131,14 +177,12 @@ class PaymentController extends AbstractController
         ]);
 
         if (!$existingCursusPurchase) {
-            // Créer un purchase pour le cursus
             $purchase = new Purchase();
             $purchase->setUser($user);
             $purchase->setCursus($cursus);
             $purchase->setType('cursus');
             $em->persist($purchase);
 
-            // Créer aussi un purchase pour chaque leçon du cursus
             foreach ($cursus->getLessons() as $lesson) {
                 $existingLessonPurchase = $em->getRepository(Purchase::class)->findOneBy([
                     'user' => $user,
@@ -146,7 +190,7 @@ class PaymentController extends AbstractController
                     'type' => 'lesson'
                 ]);
 
-                if (!$existingLessonPurchase) { // ✅ évite les doublons
+                if (!$existingLessonPurchase) {
                     $lessonPurchase = new Purchase();
                     $lessonPurchase->setUser($user);
                     $lessonPurchase->setLesson($lesson);

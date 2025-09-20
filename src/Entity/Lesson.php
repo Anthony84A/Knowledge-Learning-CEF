@@ -10,6 +10,20 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\Timestampable;
 use App\Entity\Traits\Blameable;
 
+/**
+ * Lesson entity
+ *
+ * Represents a single lesson within a course (Cursus).
+ *
+ * Uses:
+ * - Timestampable: Tracks creation and update times
+ * - Blameable: Tracks which user created or updated the entity
+ *
+ * Relationships:
+ * - Cursus: Many-to-one relationship
+ * - Purchase: One-to-many relationship
+ * - LessonValidation: One-to-many relationship
+ */
 #[ORM\Entity(repositoryClass: LessonRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Lesson
@@ -28,7 +42,6 @@ class Lesson
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    // Prix stocké en DECIMAL(10,2) pour éviter les erreurs d'arrondi
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $price = null;
 
@@ -36,15 +49,9 @@ class Lesson
     #[ORM\JoinColumn(nullable: false)]
     private ?Cursus $cursus = null;
 
-    /**
-     * @var Collection<int, Purchase>
-     */
     #[ORM\OneToMany(targetEntity: Purchase::class, mappedBy: 'lesson')]
     private Collection $purchases;
 
-    /**
-     * @var Collection<int, LessonValidation>
-     */
     #[ORM\OneToMany(targetEntity: LessonValidation::class, mappedBy: 'lesson')]
     private Collection $lessonValidations;
 
@@ -53,6 +60,8 @@ class Lesson
         $this->purchases = new ArrayCollection();
         $this->lessonValidations = new ArrayCollection();
     }
+
+    // --- Getters and setters ---
 
     public function getId(): ?int
     {
@@ -151,7 +160,6 @@ class Lesson
     public function removeLessonValidation(LessonValidation $lessonValidation): static
     {
         if ($this->lessonValidations->removeElement($lessonValidation)) {
-            // set the owning side to null (unless already changed)
             if ($lessonValidation->getLesson() === $this) {
                 $lessonValidation->setLesson(null);
             }

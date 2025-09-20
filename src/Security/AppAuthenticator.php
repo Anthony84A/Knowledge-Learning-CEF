@@ -15,17 +15,44 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
+/**
+ * AppAuthenticator
+ *
+ * Handles user authentication via a login form.
+ *
+ * Responsibilities:
+ * - Validate user credentials (email and password)
+ * - Check if the user is verified
+ * - Handle CSRF token validation
+ * - Support remember-me functionality
+ * - Redirect user after successful authentication
+ */
 class AppAuthenticator extends AbstractLoginFormAuthenticator
 {
     private UrlGeneratorInterface $urlGenerator;
     private UserRepository $userRepository;
 
+    /**
+     * Constructor
+     *
+     * @param UrlGeneratorInterface $urlGenerator Generates URLs for redirects
+     * @param UserRepository $userRepository To fetch user data
+     */
     public function __construct(UrlGeneratorInterface $urlGenerator, UserRepository $userRepository)
     {
         $this->urlGenerator = $urlGenerator;
         $this->userRepository = $userRepository;
     }
 
+    /**
+     * Authenticate the user based on email and password from the request.
+     *
+     * @param Request $request
+     * @return Passport
+     *
+     * @throws UserNotFoundException If user does not exist
+     * @throws CustomUserMessageAuthenticationException If user is not verified
+     */
     public function authenticate(Request $request): Passport
     {
         $email = $request->request->get('email', '');
@@ -37,12 +64,12 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
                 $user = $this->userRepository->findOneBy(['email' => $userIdentifier]);
 
                 if (!$user) {
-                    throw new UserNotFoundException(sprintf('Utilisateur "%s" non trouvé.', $userIdentifier));
+                    throw new UserNotFoundException(sprintf('User "%s" not found.', $userIdentifier));
                 }
 
                 if (!$user->isVerified()) {
                     throw new CustomUserMessageAuthenticationException(
-                        'Veuillez confirmer votre adresse e-mail avant de vous connecter.'
+                        'Please confirm your email address before logging in.'
                     );
                 }
 
@@ -56,15 +83,27 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
+    /**
+     * Called on successful authentication.
+     *
+     * @param Request $request
+     * @param mixed $token
+     * @param string $firewallName
+     * @return RedirectResponse Redirects the user to home page
+     */
     public function onAuthenticationSuccess(Request $request, $token, string $firewallName): RedirectResponse
     {
-        // Rediriger après connexion réussie (vers la home)
         return new RedirectResponse($this->urlGenerator->generate('home'));
     }
 
+    /**
+     * Returns the login URL.
+     *
+     * @param Request $request
+     * @return string
+     */
     protected function getLoginUrl(Request $request): string
     {
-        // URL de la page de login
         return $this->urlGenerator->generate('app_login');
     }
 }

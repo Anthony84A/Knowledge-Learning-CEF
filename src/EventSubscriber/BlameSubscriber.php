@@ -10,17 +10,23 @@ use App\Entity\Traits\Blameable;
 use App\Entity\User;
 
 /**
- * Subscriber Doctrine qui remplit automatiquement createdBy et updatedBy
+ * BlameSubscriber
+ *
+ * A Doctrine event subscriber that automatically populates `createdBy` and `updatedBy`
+ * fields for entities using the Blameable trait.
+ *
+ * Subscribed events:
+ * - prePersist: Sets both createdBy and updatedBy to the currently authenticated user
+ * - preUpdate: Updates updatedBy to the currently authenticated user
  */
 class BlameSubscriber implements EventSubscriber
 {
-    /**
-     * @var Security
-     */
     private Security $security;
 
     /**
-     * @param Security $security
+     * Constructor.
+     *
+     * @param Security $security Symfony Security service to get the currently authenticated user
      */
     public function __construct(Security $security)
     {
@@ -28,9 +34,9 @@ class BlameSubscriber implements EventSubscriber
     }
 
     /**
-     * Liste des événements Doctrine auxquels ce subscriber s'abonne
+     * Returns the list of Doctrine events this subscriber is interested in.
      *
-     * @return array<string>
+     * @return string[]
      */
     public function getSubscribedEvents(): array
     {
@@ -41,17 +47,18 @@ class BlameSubscriber implements EventSubscriber
     }
 
     /**
+     * PrePersist event handler.
+     * Sets createdBy and updatedBy fields for Blameable entities before persisting.
+     *
      * @param LifecycleEventArgs $args
      */
     public function prePersist(LifecycleEventArgs $args): void
     {
         $entity = $args->getEntity();
 
-        /** @var Blameable|null $entity */
         if (in_array(Blameable::class, class_uses($entity))) {
-            /** @var User|null $user */
             $user = $this->security->getUser();
-            if ($user) {
+            if ($user instanceof User) {
                 $entity->setCreatedBy($user);
                 $entity->setUpdatedBy($user);
             }
@@ -59,17 +66,18 @@ class BlameSubscriber implements EventSubscriber
     }
 
     /**
+     * PreUpdate event handler.
+     * Updates updatedBy field for Blameable entities before updating.
+     *
      * @param LifecycleEventArgs $args
      */
     public function preUpdate(LifecycleEventArgs $args): void
     {
         $entity = $args->getEntity();
 
-        /** @var Blameable|null $entity */
         if (in_array(Blameable::class, class_uses($entity))) {
-            /** @var User|null $user */
             $user = $this->security->getUser();
-            if ($user) {
+            if ($user instanceof User) {
                 $entity->setUpdatedBy($user);
             }
         }

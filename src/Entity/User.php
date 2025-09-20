@@ -12,6 +12,22 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Traits\Timestampable;
 use App\Entity\Traits\Blameable;
 
+/**
+ * User entity
+ *
+ * Represents a user of the Knowledge Learning platform.
+ *
+ * Implements Symfony UserInterface and PasswordAuthenticatedUserInterface.
+ *
+ * Uses:
+ * - Timestampable: Tracks creation and update times
+ * - Blameable: Tracks which user created or updated the entity
+ *
+ * Relationships:
+ * - Purchase: One-to-many relationship
+ * - Certification: One-to-many relationship
+ * - LessonValidation: One-to-many relationship
+ */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -30,36 +46,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
 
-    /**
-     * @var Collection<int, Purchase>
-     */
     #[ORM\OneToMany(targetEntity: Purchase::class, mappedBy: 'user')]
     private Collection $purchases;
 
-    /**
-     * @var Collection<int, Certification>
-     */
     #[ORM\OneToMany(targetEntity: Certification::class, mappedBy: 'user')]
     private Collection $certifications;
 
-    /**
-     * @var Collection<int, LessonValidation>
-     */
     #[ORM\OneToMany(targetEntity: LessonValidation::class, mappedBy: 'user')]
     private Collection $lessonValidations;
 
@@ -69,6 +70,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->certifications = new ArrayCollection();
         $this->lessonValidations = new ArrayCollection();
     }
+
+    // --- Getters and setters ---
 
     public function getId(): ?int
     {
@@ -97,19 +100,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @see UserInterface
+     * Get user roles.
+     * Ensures every user has at least ROLE_USER.
+     *
+     * @return string[]
      */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
     /**
-     * @param list<string> $roles
+     * Set user roles.
+     *
+     * @param string[] $roles
+     * @return static
      */
     public function setRoles(array $roles): static
     {
@@ -132,8 +140,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * Ensure the session doesn't contain actual password hashes 
-     * by CRC32C-hashing them, as supported since Symfony 7.3.
+     * Ensure session does not contain actual password hashes.
      */
     public function __serialize(): array
     {
@@ -146,7 +153,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // @deprecated, to be removed when upgrading to Symfony 8
+        // Deprecated method, no action needed
     }
 
     public function isVerified(): bool
@@ -181,7 +188,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removePurchase(Purchase $purchase): static
     {
         if ($this->purchases->removeElement($purchase)) {
-            // set the owning side to null (unless already changed)
             if ($purchase->getUser() === $this) {
                 $purchase->setUser(null);
             }
@@ -211,7 +217,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCertification(Certification $certification): static
     {
         if ($this->certifications->removeElement($certification)) {
-            // set the owning side to null (unless already changed)
             if ($certification->getUser() === $this) {
                 $certification->setUser(null);
             }
@@ -241,7 +246,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeLessonValidation(LessonValidation $lessonValidation): static
     {
         if ($this->lessonValidations->removeElement($lessonValidation)) {
-            // set the owning side to null (unless already changed)
             if ($lessonValidation->getUser() === $this) {
                 $lessonValidation->setUser(null);
             }

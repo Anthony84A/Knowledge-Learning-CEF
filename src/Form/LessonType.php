@@ -12,28 +12,50 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * LessonType Form
+ *
+ * Symfony form used to create or edit a Lesson entity.
+ *
+ * Fields:
+ * - title: Text field for the lesson title
+ * - description: Textarea for the lesson description
+ * - price: Money field for the lesson price in EUR
+ * - cursus: EntityType to select the associated Cursus
+ */
 class LessonType extends AbstractType
 {
+    /**
+     * Build the form fields.
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('title', TextType::class, [
-                'label' => 'Titre de la leçon'
+                'label' => 'Lesson Title'
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description'
             ])
             ->add('price', MoneyType::class, [
-                'label' => 'Prix (€)',
+                'label' => 'Price (€)',
                 'currency' => 'EUR'
             ])
             ->add('cursus', EntityType::class, [
                 'class' => Cursus::class,
                 'choice_label' => 'title',
-                'label' => 'Cursus associé'
+                'label' => 'Associated Course'
             ]);
     }
 
+    /**
+     * Configure the options for this form.
+     *
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

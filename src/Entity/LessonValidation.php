@@ -8,6 +8,19 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\Timestampable;
 use App\Entity\Traits\Blameable;
 
+/**
+ * LessonValidation entity
+ *
+ * Represents the validation status of a lesson for a specific user.
+ *
+ * Uses:
+ * - Timestampable: Tracks creation and update times
+ * - Blameable: Tracks which user created or updated the entity
+ *
+ * Relationships:
+ * - User: Many-to-one relationship
+ * - Lesson: Many-to-one relationship
+ */
 #[ORM\Entity(repositoryClass: LessonValidationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class LessonValidation
@@ -34,16 +47,30 @@ class LessonValidation
     #[ORM\JoinColumn(nullable: false)]
     private ?Lesson $lesson = null;
 
+    // --- Getters and setters ---
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * Check if the lesson has been validated by the user.
+     *
+     * @return bool
+     */
     public function isValidated(): bool
     {
         return $this->isValidated;
     }
 
+    /**
+     * Set the validation status of the lesson.
+     * Automatically sets validatedAt if validating.
+     *
+     * @param bool $isValidated
+     * @return static
+     */
     public function setIsValidated(bool $isValidated): static
     {
         $this->isValidated = $isValidated;
@@ -55,6 +82,11 @@ class LessonValidation
         return $this;
     }
 
+    /**
+     * Get the datetime when the lesson was validated.
+     *
+     * @return \DateTimeImmutable|null
+     */
     public function getValidatedAt(): ?\DateTimeImmutable
     {
         return $this->validatedAt;

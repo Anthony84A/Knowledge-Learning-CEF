@@ -10,6 +10,21 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\Timestampable;
 use App\Entity\Traits\Blameable;
 
+/**
+ * Cursus entity
+ *
+ * Represents a course offered within a theme.
+ *
+ * Uses:
+ * - Timestampable: Tracks creation and update times
+ * - Blameable: Tracks which user created or updated the entity
+ *
+ * Relationships:
+ * - Theme: Many-to-one relationship
+ * - Lesson: One-to-many relationship
+ * - Purchase: One-to-many relationship
+ * - Certification: One-to-many relationship
+ */
 #[ORM\Entity(repositoryClass: CursusRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Cursus
@@ -28,7 +43,6 @@ class Cursus
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    // Prix stocké en DECIMAL(10,2) pour éviter les erreurs d'arrondi
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $price = null;
 
@@ -36,21 +50,12 @@ class Cursus
     #[ORM\JoinColumn(nullable: false)]
     private ?Theme $theme = null;
 
-    /**
-     * @var Collection<int, Lesson>
-     */
     #[ORM\OneToMany(targetEntity: Lesson::class, mappedBy: 'cursus', orphanRemoval: true)]
     private Collection $lessons;
 
-    /**
-     * @var Collection<int, Purchase>
-     */
     #[ORM\OneToMany(targetEntity: Purchase::class, mappedBy: 'cursus')]
     private Collection $purchases;
 
-    /**
-     * @var Collection<int, Certification>
-     */
     #[ORM\OneToMany(targetEntity: Certification::class, mappedBy: 'cursus')]
     private Collection $certifications;
 
@@ -60,6 +65,8 @@ class Cursus
         $this->purchases = new ArrayCollection();
         $this->certifications = new ArrayCollection();
     }
+
+    // --- Getters and setters ---
 
     public function getId(): ?int
     {

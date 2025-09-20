@@ -11,10 +11,25 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/**
+ * Class AdminLessonController
+ *
+ * This controller manages CRUD operations for lesson entities.
+ * Accessible only to administrators (ROLE_ADMIN).
+ *
+ * @package App\Controller
+ */
 #[Route('/admin/lesson')]
 #[IsGranted('ROLE_ADMIN')]
 class AdminLessonController extends AbstractController
 {
+    /**
+     * Displays the list of all lessons.
+     *
+     * @param EntityManagerInterface $em Entity manager to fetch lesson data.
+     *
+     * @return Response Returns the view containing the lesson list.
+     */
     #[Route('/', name: 'admin_lesson_index')]
     public function index(EntityManagerInterface $em): Response
     {
@@ -25,6 +40,15 @@ class AdminLessonController extends AbstractController
         ]);
     }
 
+    /**
+     * Creates a new lesson entity.
+     * If the form is submitted and valid, the lesson is persisted and saved in the database.
+     *
+     * @param Request $request The current HTTP request (handles the form submission).
+     * @param EntityManagerInterface $em Entity manager to persist the new lesson.
+     *
+     * @return Response Returns the form view if not submitted or invalid, otherwise redirects to lesson index.
+     */
     #[Route('/new', name: 'admin_lesson_new')]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
@@ -45,6 +69,16 @@ class AdminLessonController extends AbstractController
         ]);
     }
 
+    /**
+     * Edits an existing lesson entity.
+     * If the form is submitted and valid, the changes are saved.
+     *
+     * @param Lesson $lesson The lesson entity to be updated.
+     * @param Request $request The current HTTP request (handles the form submission).
+     * @param EntityManagerInterface $em Entity manager to flush changes.
+     *
+     * @return Response Returns the form view if not submitted or invalid, otherwise redirects to lesson index.
+     */
     #[Route('/{id}/edit', name: 'admin_lesson_edit')]
     public function edit(Lesson $lesson, Request $request, EntityManagerInterface $em): Response
     {
@@ -63,6 +97,14 @@ class AdminLessonController extends AbstractController
         ]);
     }
 
+    /**
+     * Deletes a lesson entity from the database.
+     *
+     * @param Lesson $lesson The lesson entity to be removed.
+     * @param EntityManagerInterface $em Entity manager to handle the deletion.
+     *
+     * @return Response Redirects to the lesson index page after deletion.
+     */
     #[Route('/{id}/delete', name: 'admin_lesson_delete')]
     public function delete(Lesson $lesson, EntityManagerInterface $em): Response
     {
