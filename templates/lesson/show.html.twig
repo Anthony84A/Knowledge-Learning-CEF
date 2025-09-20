@@ -12,15 +12,9 @@
     </p>
 
     <div class="lesson-actions">
-        
         <div class="action-buttons">
             {% if app.user %}
-                {# Vérifier si la leçon est déjà achetée #}
-                {% set purchased = lesson.purchases|filter(p => p.user == app.user)|length > 0 %}
-
                 {% if purchased %}
-                    
-
                     <form method="post" action="{{ path('lesson_validate', {id: lesson.id}) }}" class="inline-form">
                         <input type="hidden" name="_token" value="{{ csrf_token('validate_lesson' ~ lesson.id) }}">
                         <button class="btn btn-outline" type="submit">Valider la leçon</button>
@@ -41,12 +35,15 @@
 
     <article class="lesson-content">
         <h2>Contenu de la leçon</h2>
-        <p>{{ lesson.description }}</p>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-            Ce texte est un exemple de contenu factice — tu pourras le remplacer 
-            par la vraie ressource pédagogique.
-        </p>
+
+        {% if app.user and purchased %}
+            <p>{{ lesson.description }}</p>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+            </p>
+        {% else %}
+            <p>Vous devez acheter cette leçon pour accéder au contenu.</p>
+        {% endif %}
     </article>
 </section>
 {% endblock %}

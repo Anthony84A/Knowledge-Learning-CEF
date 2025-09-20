@@ -6,7 +6,7 @@
 <section class="user-courses">
     <h1>📚 Mes achats</h1>
 
-    {# Récupère la liste des cursus achetés #}
+    
     {% set purchasedCursusIds = purchases
         |filter(p => p.type == 'cursus' and p.cursus)
         |map(p => p.cursus.id)
@@ -15,7 +15,7 @@
     <ul class="purchase-list">
         {% for purchase in purchases %}
             {% if purchase.type == 'lesson' and purchase.lesson %}
-                {# Afficher la leçon seulement si son cursus n'est pas déjà acheté #}
+                
                 {% if purchase.lesson.cursus.id not in purchasedCursusIds %}
                     <li>
                         <a href="{{ path('lesson_show', {id: purchase.lesson.id}) }}">

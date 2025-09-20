@@ -6,6 +6,9 @@ use App\Repository\UserRepository;
 use App\Repository\CursusRepository;
 use App\Repository\LessonRepository;
 use App\Entity\User;
+use App\Entity\LessonValidation;
+use App\Entity\Purchase;
+use App\Entity\Certification;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -110,9 +113,26 @@ class AdminController extends AbstractController
      *
      * @return Response Redirects to the admin users page.
      */
+
     #[Route('/user/{id}/delete', name: 'admin_delete_user')]
     public function deleteUser(User $user, EntityManagerInterface $em): Response
     {
+        $lessonValidations = $em->getRepository(LessonValidation::class)->findBy(['user' => $user]);
+        foreach ($lessonValidations as $lv) {
+            $em->remove($lv);
+        }
+
+        $purchases = $em->getRepository(Purchase::class)->findBy(['user' => $user]);
+        foreach ($purchases as $purchase) {
+            $em->remove($purchase);
+        }
+
+
+        $certifications = $em->getRepository(Certification::class)->findBy(['user' => $user]);
+        foreach ($certifications as $cert) {
+            $em->remove($cert);
+        }
+
         $em->remove($user);
         $em->flush();
 

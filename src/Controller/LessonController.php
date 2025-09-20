@@ -30,10 +30,33 @@ class LessonController extends AbstractController
      */
     #[Route('/lesson/{id}', name: 'lesson_show', requirements: ['id' => '\d+'])]
     #[IsGranted('ROLE_USER')]
-    public function show(Lesson $lesson): Response
+    public function show(Lesson $lesson, PurchaseRepository $purchaseRepository): Response
     {
+        $user = $this->getUser();
+
+    // Vérifier si l'utilisateur a acheté la leçon ou le cursus
+        $purchaseLesson = $purchaseRepository->findOneBy([
+            'user' => $user,
+            'lesson' => $lesson,
+            'type' => 'lesson'
+        ]);
+
+        $purchaseCursus = $purchaseRepository->findOneBy([
+            'user' => $user,
+            'cursus' => $lesson->getCursus(),
+            'type' => 'cursus'
+        ]);
+
+        $purchased = $purchaseLesson || $purchaseCursus;
+
+        if (!$purchased) {
+            $this->addFlash('error', 'Vous devez acheter cette leçon ou le cursus pour y accéder.');
+            return $this->redirectToRoute('cursus_show', ['id' => $lesson->getCursus()->getId()]);
+        }
+
         return $this->render('lesson/show.html.twig', [
             'lesson' => $lesson,
+            'purchased' => $purchased
         ]);
     }
 

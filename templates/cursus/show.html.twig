@@ -18,12 +18,12 @@
 
         <div class="action-buttons">
             {% if app.user %}
-                {# Vérifier si l'utilisateur a déjà acheté ce cursus #}
+                
                 {% set purchased = cursus.purchases|filter(p => p.user == app.user)|length > 0 %}
 
                 {% if purchased %}
                     <span class="already-bought">✅ Vous avez déjà acheté ce cursus.</span>
-                    {# Certification auto gérée côté backend quand toutes les leçons sont validées #}
+                    
                 {% else %}
                     <a class="btn btn-primary" href="{{ path('payment_checkout_cursus', {id: cursus.id}) }}">
                         Acheter ce cursus

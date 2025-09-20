@@ -10,18 +10,20 @@
         <div class="card">
             <h2 class="card-title">👥 Utilisateurs</h2>
             <p class="card-desc">{{ nbUsers }} inscrits</p>
+            <a href="{{ path('admin_users') }}" class="btn btn-primary mt-2">Gérer les utilisateurs</a>
         </div>
 
         <div class="card">
             <h2 class="card-title">📘 Cursus</h2>
             <p class="card-desc">{{ nbCursus }} cursus disponibles</p>
+            <a href="{{ path('admin_cursus_index') }}" class="btn btn-primary mt-2">Gérer les cursus</a>
         </div>
 
         <div class="card">
             <h2 class="card-title">🎓 Leçons</h2>
             <p class="card-desc">{{ nbLessons }} leçons en ligne</p>
+            <a href="{{ path('admin_lesson_index') }}" class="btn btn-primary mt-2">Gérer les leçons</a>
         </div>
-
     </div>
 </section>
 {% endblock %}
