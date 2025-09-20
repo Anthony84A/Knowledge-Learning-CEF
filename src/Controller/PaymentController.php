@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * Class PaymentController
@@ -33,6 +34,7 @@ class PaymentController extends AbstractController
      * @return Response Redirects the user to the Stripe Checkout page.
      */
     #[Route('/checkout/{id}', name: 'payment_checkout')]
+    #[IsGranted('ROLE_USER')]
     public function checkout(Lesson $lesson, Request $request): Response
     {
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
@@ -69,6 +71,7 @@ class PaymentController extends AbstractController
      * @return Response Renders the success page with lesson details.
      */
     #[Route('/success/{lessonId}/{sessionId}', name: 'payment_success')]
+    #[IsGranted('ROLE_USER')]
     public function success(int $lessonId, string $sessionId, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
@@ -108,6 +111,7 @@ class PaymentController extends AbstractController
      * @return Response Returns the cancel page view.
      */
     #[Route('/cancel', name: 'payment_cancel')]
+    #[IsGranted('ROLE_USER')]
     public function cancel(): Response
     {
         return $this->render('payment/cancel.html.twig');
@@ -122,6 +126,7 @@ class PaymentController extends AbstractController
      * @return Response Redirects the user to the Stripe Checkout page.
      */
     #[Route('/checkout/cursus/{id}', name: 'payment_checkout_cursus')]
+    #[IsGranted('ROLE_USER')]
     public function checkoutCursus(Cursus $cursus, Request $request): Response
     {
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
@@ -158,6 +163,7 @@ class PaymentController extends AbstractController
      * @return Response Renders the success page with cursus details.
      */
     #[Route('/success-cursus/{cursusId}/{sessionId}', name: 'payment_success_cursus')]
+    #[IsGranted('ROLE_USER')]
     public function successCursus(int $cursusId, string $sessionId, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();

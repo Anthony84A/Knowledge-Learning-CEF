@@ -24,6 +24,7 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
  * Handles:
  * - User account creation
  * - Password hashing
+ * - Automatic assignment of the "ROLE_USER" role
  * - Sending confirmation emails
  * - Automatic login after registration
  * - Email verification
@@ -44,6 +45,14 @@ class RegistrationController extends AbstractController
 
     /**
      * Handles user registration.
+     *
+     * Workflow:
+     * 1. Display and process the registration form
+     * 2. Hash the user's password
+     * 3. Assign the default role "ROLE_USER"
+     * 4. Save the user in the database
+     * 5. Send a confirmation email
+     * 6. Automatically log the user in
      *
      * @param Request $request The HTTP request
      * @param UserPasswordHasherInterface $userPasswordHasher Service to hash passwords
@@ -66,7 +75,12 @@ class RegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Hash the plain password and set it on the user entity
             $plainPassword = $form->get('plainPassword')->getData();
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->setPassword(
+                $userPasswordHasher->hashPassword($user, $plainPassword)
+            );
+
+            // ✅ Assign default role "ROLE_USER"
+            $user->setRoles(['ROLE_USER']);
 
             // Persist the new user to the database
             $entityManager->persist($user);
